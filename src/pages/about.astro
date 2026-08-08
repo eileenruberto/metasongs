@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="About" description="What Metasongs is and how it's curated.">
+  <h1>About</h1>
+
+  <div class="prose">
+    <p>
+      Metasongs are songs about songs. This may take the form of a song that references itself
+      or other songs, artists, or albums. The reference can be nominal, lyrical, melodic, or some
+      combination. Examples range from obvious namechecks to the subtlest of nods to the listener.
+    </p>
+    <p>
+      This site is a lovingly compiled collection of these auditory easter eggs nestled throughout
+      the popular music canon, interlinked with the underlying source material they draw from. It
+      is also a public playground for building out a classification system of these kinds of songs
+      within songs, and a continual work in progress.
+    </p>
+
+    <h2>Curatorial note</h2>
+    <p>
+      Songs that feature sampling (taking part of an existing sound recording and incorporating it
+      into a new work) are largely omitted from this collection for the preservation of our sanity
+      and because WhoSampled has that category pretty well covered.
+    </p>
+    <p>
+      However, many of the songs featured here include examples of interpolation. This involves
+      taking part of an existing musical work and incorporating it into a new work. Unlike
+      sampling, new audio is recorded rather than using any of the actual audio from the
+      preexisting recording.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 640px;
+    margin-top: 1.5rem;
+  }
+  .prose p {
+    margin: 0 0 1rem;
+    line-height: 1.6;
+  }
+  .prose h2 {
+    margin: 2rem 0 0.75rem;
+  }
+</style>

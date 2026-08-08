@@ -1,0 +1,44 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllArtists } from '../../lib/queries';
+
+export const prerender = false;
+
+const artists = await getAllArtists();
+---
+<Layout title="Artists">
+  <h1>Artists</h1>
+
+  <input type="text" id="artist-search" class="search-input" placeholder="Search artists…" />
+
+  <ul class="artist-grid" id="artist-grid">
+    {artists.map((a) => (
+      <li data-name={a.name.toLowerCase()}>
+        <a class="artist-card" href={`/artists/${a.slug}`}>
+          {a.image_url && <img src={a.image_url} alt={a.name} loading="lazy" />}
+          <span>{a.name}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="search-empty" id="artist-search-empty">No artists match "<span></span>".</p>
+</Layout>
+
+<script>
+  const input = document.getElementById('artist-search') as HTMLInputElement;
+  const items = [...document.querySelectorAll<HTMLLIElement>('#artist-grid > li')];
+  const empty = document.getElementById('artist-search-empty')!;
+  const emptyQuery = empty.querySelector('span')!;
+
+  input.addEventListener('input', () => {
+    const query = input.value.trim().toLowerCase();
+    let visibleCount = 0;
+    for (const item of items) {
+      const matches = !query || item.dataset.name!.includes(query);
+      item.style.display = matches ? '' : 'none';
+      if (matches) visibleCount++;
+    }
+    empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    emptyQuery.textContent = query;
+  });
+</script>

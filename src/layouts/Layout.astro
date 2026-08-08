@@ -1,0 +1,322 @@
+---
+import '@fontsource/cabin/500.css';
+import '@fontsource/cabin/700.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/400-italic.css';
+import type { Paper } from '../lib/theme';
+
+interface Props {
+  title: string;
+  description?: string;
+  paper?: Paper;
+}
+const { title, description = 'A collection of songs that reference other songs.', paper = 'blank' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" />
+    <title>{title} · Metasongs</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class={`paper-${paper}`}>
+    <header class="site-header">
+      <a class="wordmark" href="/">Metasongs</a>
+      <nav>
+        <a href="/">Songs</a>
+        <a href="/artists">Artists</a>
+        <a href="/categories">Categories</a>
+        <a href="/about">About</a>
+        <a href="/contribute">Contribute</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>Metasongs — songs that reference other songs.</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-ink: #1a1919;
+
+    --paper-blank: #eae8e3;
+    --paper-sand: #f2e0c8;
+    --paper-clay: #fbdbd2;
+    --paper-periwinkle: #d7e3fd;
+    --paper-lilac: #ebdcf6;
+    --paper-aqua: #c9ece4;
+    --paper-slate: #dbe4ed;
+
+    --font-sans: "Cabin", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --radius: 10px;
+  }
+
+  .paper-blank { --color-paper: var(--paper-blank); }
+  .paper-sand { --color-paper: var(--paper-sand); }
+  .paper-clay { --color-paper: var(--paper-clay); }
+  .paper-periwinkle { --color-paper: var(--paper-periwinkle); }
+  .paper-lilac { --color-paper: var(--paper-lilac); }
+  .paper-aqua { --color-paper: var(--paper-aqua); }
+  .paper-slate { --color-paper: var(--paper-slate); }
+
+  body {
+    --color-surface: color-mix(in srgb, var(--color-ink) 8%, var(--color-paper));
+    --color-border: color-mix(in srgb, var(--color-ink) 16%, var(--color-paper));
+    --color-dim: color-mix(in srgb, var(--color-ink) 55%, var(--color-paper));
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    line-height: 1.55;
+    transition: background 0.2s ease;
+  }
+  main {
+    container-type: inline-size;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+  }
+  a { color: inherit; }
+  a:hover { font-style: italic; }
+
+  h1, h2, .wordmark {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 0.5rem;
+  }
+  .wordmark {
+    font-size: 1.15rem;
+    text-decoration: none;
+  }
+  .wordmark:hover { font-style: normal; }
+  .site-header nav { display: flex; gap: 1.25rem; }
+  .site-header nav a {
+    text-decoration: none;
+    color: var(--color-dim);
+    font-size: 0.85rem;
+  }
+  .site-header nav a:hover { color: var(--color-ink); }
+
+  .site-footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+    color: var(--color-dim);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.6rem + 2.4cqw, 3rem);
+    margin: 0 0 0.35rem;
+    line-height: 1.05;
+  }
+  h2 {
+    font-size: clamp(1.15rem, 1rem + 1cqw, 1.5rem);
+    margin: 0;
+  }
+  p.lede {
+    color: var(--color-dim);
+    margin-top: 0;
+    font-size: clamp(0.9rem, 0.85rem + 0.3cqw, 1.05rem);
+  }
+
+  .marker {
+    background: linear-gradient(104deg,
+      transparent 0%, transparent 3%,
+      #f2c14e 3%, #f2c14e 94%,
+      transparent 94%, transparent 100%);
+    padding: 0.05em 0.2em;
+    display: inline-block;
+    transform: rotate(-1deg);
+  }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+  .chip {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    text-decoration: none;
+    color: var(--color-dim);
+    background: var(--color-surface);
+  }
+  a.chip:hover { border-color: var(--color-ink); color: var(--color-ink); font-style: normal; }
+  span.chip { font-style: normal; }
+
+  .search-input {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    margin-top: 1rem;
+  }
+  .search-empty { color: var(--color-dim); margin-top: 1.5rem; display: none; }
+
+  .song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  .song-card {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+  .song-card:hover { font-style: normal; border-color: var(--color-ink); }
+  .song-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    background: var(--color-border);
+  }
+  .song-card .meta { padding: 0.65rem 0.75rem; }
+  .song-card .title { font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; }
+  .song-card .artist { color: var(--color-dim); font-size: 0.8rem; }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-dim);
+    margin-bottom: 1rem;
+  }
+  .breadcrumb a { text-decoration: none; }
+  .breadcrumb a:hover { color: var(--color-ink); }
+  .breadcrumb-sep { margin: 0 0.4rem; }
+  .breadcrumb-current { color: var(--color-ink); font-style: normal; }
+
+  .external-arrow { display: inline-block; opacity: 0.65; margin-left: 0.15em; }
+
+  .song-header { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .song-header img {
+    width: 180px; height: 180px; object-fit: cover;
+    border-radius: var(--radius); border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .link-row { display: flex; gap: 0.6rem; margin: 1rem 0; flex-wrap: wrap; }
+  .link-row a {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    text-decoration: none;
+    background: var(--color-surface);
+  }
+  .link-row a:hover { border-color: var(--color-ink); font-style: normal; }
+
+  blockquote.lyrics {
+    white-space: pre-wrap;
+    font-style: italic;
+    color: var(--color-dim);
+    border-left: 3px solid var(--color-ink);
+    margin: 1.5rem 0;
+    padding: 0.25rem 0 0.25rem 1rem;
+    font-size: clamp(0.95rem, 0.9rem + 0.3cqw, 1.1rem);
+  }
+
+  section.block { margin-top: 2rem; }
+  section.block h2 { margin-bottom: 0.5rem; }
+  section.block p { font-size: 0.95rem; }
+
+  .description { font-size: 0.95rem; }
+  .description p { margin: 0 0 1rem; }
+  .description p:last-child { margin-bottom: 0; }
+  .description a { text-decoration: underline; }
+  .description blockquote {
+    margin: 1rem 0;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-left: 3px solid var(--color-border);
+    color: var(--color-dim);
+  }
+  .description ul, .description ol { margin: 0 0 1rem; padding-left: 1.3rem; }
+  .description code {
+    font-size: 0.85em;
+    background: var(--color-surface);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  .song-row-list { list-style: none; padding: 0; margin: 0.5rem 0; }
+  .song-row-list li { border-top: 1px solid var(--color-border); }
+  .song-row-list li:last-child { border-bottom: 1px solid var(--color-border); }
+
+  .song-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  a.song-row:hover { font-style: normal; color: var(--color-dim); }
+  .song-row img, .song-row-thumb-placeholder {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--color-border);
+  }
+  .song-row-text { display: flex; flex-direction: column; min-width: 0; }
+  .song-row-title { font-weight: 500; }
+  .song-row-artist { color: var(--color-dim); font-size: 0.8rem; }
+  .song-row-chevron { margin-left: auto; color: var(--color-dim); flex-shrink: 0; }
+  .song-row-unmatched { color: var(--color-dim); }
+  .song-row-unmatched .song-row-title { font-weight: 400; font-style: italic; }
+
+  .artist-grid, .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  .artist-card {
+    display: flex; align-items: center; gap: 0.6rem;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.6rem;
+    background: var(--color-surface);
+  }
+  .artist-card:hover { font-style: normal; border-color: var(--color-ink); }
+  .artist-card img {
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    background: var(--color-border);
+  }
+  .artist-card span { font-size: 0.85rem; }
+</style>

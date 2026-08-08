@@ -1,0 +1,54 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllCategories } from '../../lib/queries';
+import { paperForCategoryName } from '../../lib/theme';
+
+export const prerender = false;
+
+const categories = await getAllCategories();
+---
+<Layout title="Categories">
+  <h1>Categories</h1>
+  <ul class="category-tiles">
+    {categories.map((c) => (
+      <li class={`paper-${paperForCategoryName(c.name)}`}>
+        <a href={`/categories/${c.slug}`}>
+          <strong>{c.name}</strong>
+          {c.description && <p>{c.description}</p>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  .category-tiles {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .category-tiles li {
+    background: var(--color-paper);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .category-tiles a {
+    display: block;
+    padding: 1.1rem 1.2rem;
+    text-decoration: none;
+  }
+  .category-tiles a:hover { font-style: normal; }
+  .category-tiles strong {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+  }
+  .category-tiles p {
+    margin: 0.4rem 0 0;
+    color: var(--color-dim);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+</style>

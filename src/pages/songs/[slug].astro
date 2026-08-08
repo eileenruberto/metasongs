@@ -1,0 +1,126 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getSongBySlug } from '../../lib/queries';
+import { paperForSong } from '../../lib/theme';
+import { renderMarkdown } from '../../lib/markdown';
+
+// Rendered on-demand (not pre-built) so a song added in the admin shows up
+// immediately, without waiting for a rebuild+redeploy.
+export const prerender = false;
+
+const { slug } = Astro.params;
+const song = await getSongBySlug(slug!);
+if (!song) return Astro.redirect('/404');
+
+const referencedBy = (song as any).referencedBy as { slug: string; title: string; image_url: string | null; artist: { name: string } }[];
+const categoryTags = song.song_tags.filter((t) => t.tag_type === 'category');
+const subcategoryTags = song.song_tags.filter((t) => t.tag_type === 'subcategory');
+const referenceTypeTags = song.song_tags.filter((t) => t.tag_type === 'reference_type');
+const paper = paperForSong(categoryTags.map((t) => t.value));
+const descriptionHtml = song.description ? await renderMarkdown(song.description) : null;
+---
+<Layout title={song.title} description={`${song.title} by ${song.artist.name} — a metasong.`} paper={paper}>
+  <nav class="breadcrumb">
+    <a href="/">Songs</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">{song.title}</span>
+  </nav>
+  <div class="song-header">
+    {song.image_url && <img src={song.image_url} alt={song.title} />}
+    <div>
+      <h1>{song.title}</h1>
+      <p class="lede">
+        <a href={`/artists/${song.artist.slug}`}>{song.artist.name}</a>
+        {song.album && <> · {song.album}</>}
+      </p>
+      <div class="link-row">
+        {song.song_link_url && (
+          <a href={song.song_link_url} target="_blank" rel="noopener">Song Link<span class="external-arrow">&nbsp;↗</span></a>
+        )}
+      </div>
+      <div class="chip-row">
+        {[...categoryTags, ...subcategoryTags, ...referenceTypeTags].map((t) => <span class="chip">{t.value}</span>)}
+      </div>
+    </div>
+  </div>
+
+  {descriptionHtml && (
+    <section class="block description" set:html={descriptionHtml} />
+  )}
+
+  {song.source_url && (
+    <div class="link-row">
+      <a href={song.source_url} target="_blank" rel="noopener">Source<span class="external-arrow">&nbsp;↗</span></a>
+    </div>
+  )}
+
+  {song.meta_lyrics && <blockquote class="lyrics">{song.meta_lyrics}</blockquote>}
+
+
+  {song.featured_artists.length > 0 && (
+    <section class="block">
+      <h2>Featured artists</h2>
+      <p>
+        {song.featured_artists.map((a, i) => (
+          <>
+            {i > 0 && ', '}
+            <a href={`/artists/${a.slug}`}>{a.name}</a>
+          </>
+        ))}
+      </p>
+    </section>
+  )}
+
+  {song.references.length > 0 && (
+    <section class="block">
+      <h2>References</h2>
+      <ul class="song-row-list">
+        {song.references.map((ref) => (
+          <li>
+            {ref.referenced_song ? (
+              <a class="song-row" href={`/songs/${ref.referenced_song.slug}`}>
+                {ref.referenced_song.image_url ? (
+                  <img src={ref.referenced_song.image_url} alt="" loading="lazy" />
+                ) : (
+                  <span class="song-row-thumb-placeholder" />
+                )}
+                <span class="song-row-text">
+                  <span class="song-row-title">{ref.referenced_song.title}</span>
+                  <span class="song-row-artist">{ref.referenced_song.artist.name}</span>
+                </span>
+                <span class="song-row-chevron">›</span>
+              </a>
+            ) : (
+              <span class="song-row song-row-unmatched">
+                <span class="song-row-thumb-placeholder" />
+                <span class="song-row-text">
+                  <span class="song-row-title">{ref.referenced_title_raw}</span>
+                </span>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {referencedBy && referencedBy.length > 0 && (
+    <section class="block">
+      <h2>Referenced by</h2>
+      <ul class="song-row-list">
+        {referencedBy.map((s) => (
+          <li>
+            <a class="song-row" href={`/songs/${s.slug}`}>
+              {s.image_url ? <img src={s.image_url} alt="" loading="lazy" /> : <span class="song-row-thumb-placeholder" />}
+              <span class="song-row-text">
+                <span class="song-row-title">{s.title}</span>
+                <span class="song-row-artist">{s.artist.name}</span>
+              </span>
+              <span class="song-row-chevron">›</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</Layout>

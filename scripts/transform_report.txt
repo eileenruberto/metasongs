@@ -1,0 +1,25 @@
+categories: 5
+artists: 316 unique (from 312 source rows)
+songs: 326 total, 5 needed an auto-created artist
+song_references: 195 matched to a known song, 3 kept as text-only
+Duplicate artist name 'Peter Paul and Mary': kept row GCENYBuGSke5870zYZrDsg, dropped row 0eXzu3YMRmyUGv7nrSbq8Q (image https://i.scdn.co/image/8775d2330e168b1c4183a976afcf8bd529bd6d36)
+Song 'Swing Low Sweet Chariot' references artist 'Traditional' not in Artists table -> creating artist record
+Song 'Fabulous' references artist 'MEEK' not in Artists table -> creating artist record
+Song 'Downtown' references artist 'Macklemore' not in Artists table -> creating artist record
+Song 'ICONIC!' has category tag "Mo's Corner" not present in curated Categories list
+Song 'deja vu' has category tag "Mo's Corner" not present in curated Categories list
+Song 'bad idea right?' has category tag "Mo's Corner" not present in curated Categories list
+Song 'brutal' has category tag "Mo's Corner" not present in curated Categories list
+Song 'Discovery Channel' has category tag "Mo's Corner" not present in curated Categories list
+Song 'True Believer' has category tag "Mo's Corner" not present in curated Categories list
+Song 'Cha Cha' has category tag "Mo's Corner" not present in curated Categories list
+Song 'Drop Dead Gorgeous' has category tag "Mo's Corner" not present in curated Categories list
+Song 'Metal Heart' has category tag 'Lyrical quote' not present in curated Categories list
+Song 'Waltzing Matilda' references artist '[Unknown - Australian Folk Song]' not in Artists table -> creating artist record
+Song 'Hanky Panky' references artist 'Tommy James & The Shondells' not in Artists table -> creating artist record
+Song 'Davy Crockett' has category tag 'Lyrical quote' not present in curated Categories list
+Song 'Drive' has category tag 'Lyrical quote' not present in curated Categories list
+Song 'Supersonic' has category tag 'Lyrical quote' not present in curated Categories list
+Song 'Mothership Connection (Star Child)' references 'Swing Down Sweet Chariot' -> no matching song title found
+Song 'Ronnie And Neil' references 'Alabama' -> no matching song title found
+Song 'Black and Brown Blues' references 'Crazy Train' -> no matching song title found

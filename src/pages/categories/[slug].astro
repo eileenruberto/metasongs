@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCategoryBySlug } from '../../lib/queries';
+import { paperForCategoryName } from '../../lib/theme';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const result = await getCategoryBySlug(slug!);
+if (!result) return Astro.redirect('/404');
+const { category, songs } = result;
+---
+<Layout title={category.name} description={category.description ?? undefined} paper={paperForCategoryName(category.name)}>
+  <h1>{category.name}</h1>
+  {category.description && <p class="lede">{category.description}</p>}
+
+  <ul class="song-grid">
+    {songs.map((song) => (
+      <li>
+        <a class="song-card" href={`/songs/${song.slug}`}>
+          {song.image_url && <img src={song.image_url} alt={song.title} loading="lazy" />}
+          <div class="meta">
+            <div class="title">{song.title}</div>
+            <div class="artist">{song.artist.name}</div>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>

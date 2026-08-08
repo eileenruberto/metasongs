@@ -1,0 +1,10 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminSongEdit from '../../../components/admin/AdminSongEdit';
+
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
+---
+<AdminLayout title="Edit song">
+  <AdminSongEdit client:load supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey} />
+</AdminLayout>

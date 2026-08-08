@@ -1,0 +1,209 @@
+---
+import '@fontsource/cabin/500.css';
+import '@fontsource/cabin/700.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" />
+    <title>{title} · Metasongs Admin</title>
+  </head>
+  <body class="paper-blank">
+    <div class="admin-shell">
+      <slot />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-ink: #1a1919;
+    --paper-blank: #eae8e3;
+    --font-sans: "Cabin", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --radius: 10px;
+  }
+  .paper-blank { --color-paper: var(--paper-blank); }
+  body {
+    --color-surface: color-mix(in srgb, var(--color-ink) 8%, var(--color-paper));
+    --color-border: color-mix(in srgb, var(--color-ink) 16%, var(--color-paper));
+    --color-dim: color-mix(in srgb, var(--color-ink) 55%, var(--color-paper));
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+  }
+  * { box-sizing: border-box; }
+  h1, h2, h3 { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.01em; }
+  a { color: inherit; }
+
+  .admin-shell { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+  .admin-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.85rem;
+  }
+  .admin-nav a { text-decoration: none; color: var(--color-dim); }
+  .admin-nav a:hover, .admin-nav a.active { color: var(--color-ink); }
+  .admin-signout {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    color: var(--color-dim);
+  }
+  .admin-signout:hover { border-color: var(--color-ink); color: var(--color-ink); }
+
+  .admin-loading { color: var(--color-dim); }
+
+  .admin-login {
+    max-width: 320px;
+    margin: 3rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .admin-login label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; }
+  .admin-login input {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .admin-login button {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    cursor: pointer;
+  }
+  .admin-login button:disabled { opacity: 0.5; cursor: default; }
+  .admin-error { color: #b3261e; font-size: 0.85rem; }
+
+  .admin-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .admin-dashboard-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+  }
+  .admin-dashboard-links a {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    background: var(--color-surface);
+  }
+  .admin-dashboard-links a:hover { border-color: var(--color-ink); }
+
+  .admin-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; margin-bottom: 1rem; }
+  .admin-field input[type="text"],
+  .admin-field input[type="url"],
+  .admin-field input[type="email"],
+  .admin-field input[type="password"],
+  .admin-field textarea,
+  .admin-field select {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    width: 100%;
+  }
+  .admin-field textarea { resize: vertical; }
+  .admin-checkboxes { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .admin-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem 0.3rem 0.5rem;
+    background: var(--color-surface);
+  }
+
+  .admin-button {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    cursor: pointer;
+  }
+  .admin-button:disabled { opacity: 0.5; cursor: default; }
+  .admin-button.secondary {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border-color: var(--color-border);
+  }
+  .admin-button.danger {
+    background: var(--color-surface);
+    color: #b3261e;
+    border-color: #b3261e;
+  }
+
+  .admin-status { font-size: 0.85rem; color: var(--color-dim); min-height: 1.2em; }
+
+  table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  table.admin-table th, table.admin-table td {
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  table.admin-table tr:hover td { background: var(--color-surface); }
+  table.admin-table a { text-decoration: none; }
+  table.admin-table a:hover { text-decoration: underline; }
+
+  .admin-search {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    margin-bottom: 1rem;
+  }
+</style>

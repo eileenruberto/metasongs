@@ -1,0 +1,114 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getAllSongs, getAllCategories, isMetasong } from '../lib/queries';
+import { paperForCategoryName } from '../lib/theme';
+
+export const prerender = false;
+
+const [allSongs, categories] = await Promise.all([getAllSongs(), getAllCategories()]);
+const songs = allSongs.filter(isMetasong);
+---
+<Layout title="Home">
+  <h1>Metasongs</h1>
+  <p class="lede">A collection of songs that <span class="marker">reference other songs</span> — quotes, interpolations, and namechecks.</p>
+
+  <div class="chip-row">
+    {categories.map((c) => (
+      <a class="chip" href={`/categories/${c.slug}`} style={`background: var(--paper-${paperForCategoryName(c.name)})`}>
+        {c.name}
+      </a>
+    ))}
+  </div>
+
+  <div class="controls-row">
+    <input type="text" id="song-search" class="search-input" placeholder="Search songs or artists…" />
+    <select id="song-sort" class="sort-select">
+      <option value="az">Name (A–Z)</option>
+      <option value="za">Name (Z–A)</option>
+      <option value="newest">Date Added (Newest)</option>
+      <option value="oldest">Date Added (Oldest)</option>
+      <option value="random">Random</option>
+    </select>
+  </div>
+
+  <ul class="song-grid" id="song-grid">
+    {songs.map((song) => (
+      <li
+        data-title={song.title.toLowerCase()}
+        data-artist={song.artist.name.toLowerCase()}
+        data-created-at={new Date(song.created_at).getTime()}
+      >
+        <a class="song-card" href={`/songs/${song.slug}`}>
+          {song.image_url && <img src={song.image_url} alt={song.title} loading="lazy" />}
+          <div class="meta">
+            <div class="title">{song.title}</div>
+            <div class="artist">{song.artist.name}</div>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="search-empty" id="song-search-empty">No songs match "<span></span>".</p>
+</Layout>
+
+<style>
+  .controls-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  .controls-row .search-input { margin-top: 0; flex: 1; }
+  .sort-select {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+</style>
+
+<script>
+  const searchInput = document.getElementById('song-search') as HTMLInputElement;
+  const sortSelect = document.getElementById('song-sort') as HTMLSelectElement;
+  const grid = document.getElementById('song-grid')!;
+  const items = [...document.querySelectorAll<HTMLLIElement>('#song-grid > li')];
+  const empty = document.getElementById('song-search-empty')!;
+  const emptyQuery = empty.querySelector('span')!;
+
+  function applySearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+    for (const item of items) {
+      const matches = !query || item.dataset.title!.includes(query) || item.dataset.artist!.includes(query);
+      item.style.display = matches ? '' : 'none';
+      if (matches) visibleCount++;
+    }
+    empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    emptyQuery.textContent = query;
+  }
+
+  function shuffle<T>(arr: T[]): T[] {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function applySort() {
+    const mode = sortSelect.value;
+    let sorted = [...items];
+    if (mode === 'az') sorted.sort((a, b) => a.dataset.title!.localeCompare(b.dataset.title!));
+    else if (mode === 'za') sorted.sort((a, b) => b.dataset.title!.localeCompare(a.dataset.title!));
+    else if (mode === 'newest') sorted.sort((a, b) => Number(b.dataset.createdAt) - Number(a.dataset.createdAt));
+    else if (mode === 'oldest') sorted.sort((a, b) => Number(a.dataset.createdAt) - Number(b.dataset.createdAt));
+    else if (mode === 'random') sorted = shuffle(sorted);
+    for (const item of sorted) grid.appendChild(item);
+  }
+
+  searchInput.addEventListener('input', applySearch);
+  sortSelect.addEventListener('change', applySort);
+</script>

@@ -1,0 +1,33 @@
+{
+  "name": "metasongs",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^6.0.2",
+    "@astrojs/vercel": "^11.0.5",
+    "@fontsource/cabin": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@supabase/supabase-js": "^2.110.7",
+    "astro": "^7.1.1",
+    "latest": "^0.2.0",
+    "marked": "^18.0.9",
+    "n": "^10.2.0",
+    "preact": "^10.29.8",
+    "sanitize-html": "^2.17.6",
+    "stable": "^0.1.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/sanitize-html": "^2.16.1",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
+---
+<Layout title="Contribute" description="Suggest a song for Metasongs.">
+  <h1>Contribute</h1>
+  <p class="lede">Know a song that references another song, artist, or album? Suggest it below.</p>
+
+  <form id="suggestion-form" class="suggestion-form">
+    <label>
+      <span>Song Title</span>
+      <input type="text" name="song_title" required />
+    </label>
+    <label>
+      <span>Artist</span>
+      <input type="text" name="artist" required />
+    </label>
+    <label>
+      <span>Song Link</span>
+      <input type="url" name="song_link" placeholder="https://open.spotify.com/track/..." />
+    </label>
+    <label>
+      <span>Song(s) Referenced</span>
+      <input type="text" name="songs_referenced" />
+    </label>
+    <label>
+      <span>Comments</span>
+      <textarea name="comments" rows="4"></textarea>
+    </label>
+    <label>
+      <span>Your Name <em>(optional)</em></span>
+      <input type="text" name="name" />
+    </label>
+    <label>
+      <span>Your Email Address <em>(optional)</em></span>
+      <input type="email" name="email" />
+    </label>
+    <button type="submit">Submit</button>
+    <p id="suggestion-status" role="status"></p>
+  </form>
+</Layout>
+
+<style>
+  .suggestion-form {
+    max-width: 480px;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .suggestion-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+  }
+  .suggestion-form label em {
+    color: var(--color-dim);
+    font-style: italic;
+  }
+  .suggestion-form input,
+  .suggestion-form textarea {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .suggestion-form textarea { resize: vertical; }
+  .suggestion-form input:focus,
+  .suggestion-form textarea:focus {
+    outline: none;
+    border-color: var(--color-ink);
+  }
+  .suggestion-form button {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 999px;
+    padding: 0.5rem 1.2rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    cursor: pointer;
+  }
+  .suggestion-form button:disabled { opacity: 0.5; cursor: default; }
+  #suggestion-status { color: var(--color-dim); font-size: 0.85rem; min-height: 1.2em; }
+</style>
+
+<script define:vars={{ supabaseUrl, supabaseAnonKey }} is:inline>
+  const form = document.getElementById('suggestion-form');
+  const status = document.getElementById('suggestion-status');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    status.textContent = 'Submitting…';
+
+    const formData = new FormData(form);
+    const payload = {
+      song_title: formData.get('song_title'),
+      artist: formData.get('artist'),
+      song_link: formData.get('song_link') || null,
+      songs_referenced: formData.get('songs_referenced') || null,
+      comments: formData.get('comments') || null,
+      name: formData.get('name') || null,
+      email: formData.get('email') || null,
+    };
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/song_suggestions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(await response.text());
+      form.reset();
+      status.textContent = 'Thanks! Your suggestion has been submitted.';
+    } catch (err) {
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+</script>

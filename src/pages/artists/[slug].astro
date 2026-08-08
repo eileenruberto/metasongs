@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getArtistBySlug, isMetasong } from '../../lib/queries';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const result = await getArtistBySlug(slug!);
+if (!result) return Astro.redirect('/404');
+const { artist, songs, referencedIn } = result;
+const metasongs = songs.filter(isMetasong);
+---
+<Layout title={artist.name}>
+  <nav class="breadcrumb">
+    <a href="/artists">Artists</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">{artist.name}</span>
+  </nav>
+  <div class="song-header">
+    {artist.image_url && <img src={artist.image_url} alt={artist.name} />}
+    <div>
+      <h1>{artist.name}</h1>
+      {artist.is_most_referenced && <p class="lede">One of the most referenced artists in this collection.</p>}
+    </div>
+  </div>
+
+  {metasongs.length > 0 && (
+    <section class="block">
+      <h2>Metasongs by {artist.name}</h2>
+      <ul class="song-row-list">
+        {metasongs.map((song) => (
+          <li>
+            <a class="song-row" href={`/songs/${song.slug}`}>
+              {song.image_url ? <img src={song.image_url} alt="" loading="lazy" /> : <span class="song-row-thumb-placeholder" />}
+              <span class="song-row-text">
+                <span class="song-row-title">{song.title}</span>
+                <span class="song-row-artist">{artist.name}</span>
+              </span>
+              <span class="song-row-chevron">›</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {referencedIn.length > 0 && (
+    <section class="block">
+      <h2>Referenced In</h2>
+      <ul class="song-row-list">
+        {referencedIn.map((song) => (
+          <li>
+            <a class="song-row" href={`/songs/${song.slug}`}>
+              {song.image_url ? <img src={song.image_url} alt="" loading="lazy" /> : <span class="song-row-thumb-placeholder" />}
+              <span class="song-row-text">
+                <span class="song-row-title">{song.title}</span>
+                <span class="song-row-artist">{song.artist.name}</span>
+              </span>
+              <span class="song-row-chevron">›</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</Layout>

@@ -10,6 +10,7 @@ export const CATEGORY_PAPER: Record<string, Paper> = {
   'Namechecks': 'clay',
   'Meta Medleys': 'lilac',
   'Most Referenced': 'sand',
+  'Lyrical Nods': 'slate',
 };
 
 export function paperForCategoryName(name: string | undefined | null): Paper {

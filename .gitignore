@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 .vercel
 .env*
+
+# supabase CLI local link/cache state
+supabase/.temp/

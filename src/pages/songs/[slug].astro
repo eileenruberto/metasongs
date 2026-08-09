@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getSongBySlug } from '../../lib/queries';
-import { paperForSong } from '../../lib/theme';
+import { getSongBySlug, getAllCategories } from '../../lib/queries';
+import { paperForSong, paperForCategoryName } from '../../lib/theme';
 import { renderMarkdown } from '../../lib/markdown';
 
 // Rendered on-demand (not pre-built) so a song added in the admin shows up
@@ -9,13 +9,12 @@ import { renderMarkdown } from '../../lib/markdown';
 export const prerender = false;
 
 const { slug } = Astro.params;
-const song = await getSongBySlug(slug!);
+const [song, categories] = await Promise.all([getSongBySlug(slug!), getAllCategories()]);
 if (!song) return Astro.redirect('/404');
 
+const categorySlugByName = new Map(categories.map((c) => [c.name, c.slug]));
 const referencedBy = (song as any).referencedBy as { slug: string; title: string; image_url: string | null; artist: { name: string } }[];
 const categoryTags = song.song_tags.filter((t) => t.tag_type === 'category');
-const subcategoryTags = song.song_tags.filter((t) => t.tag_type === 'subcategory');
-const referenceTypeTags = song.song_tags.filter((t) => t.tag_type === 'reference_type');
 const paper = paperForSong(categoryTags.map((t) => t.value));
 const descriptionHtml = song.description ? await renderMarkdown(song.description) : null;
 ---
@@ -39,13 +38,23 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
         )}
       </div>
       <div class="chip-row">
-        {[...categoryTags, ...subcategoryTags, ...referenceTypeTags].map((t) => <span class="chip">{t.value}</span>)}
+        {categoryTags.map((t) => {
+          const catSlug = categorySlugByName.get(t.value);
+          return catSlug ? (
+            <a class="chip" href={`/categories/${catSlug}`} style={`background: var(--paper-${paperForCategoryName(t.value)})`}>{t.value}</a>
+          ) : (
+            <span class="chip">{t.value}</span>
+          );
+        })}
       </div>
     </div>
   </div>
 
   {descriptionHtml && (
-    <section class="block description" set:html={descriptionHtml} />
+    <>
+      <h3 class="section-label">Description</h3>
+      <section class="block description" set:html={descriptionHtml} />
+    </>
   )}
 
   {song.source_url && (
@@ -54,8 +63,15 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
     </div>
   )}
 
-  {song.meta_lyrics && <blockquote class="lyrics">{song.meta_lyrics}</blockquote>}
+  {(descriptionHtml || song.source_url) && <hr class="divider" />}
 
+  {song.meta_lyrics && (
+    <>
+      <h3 class="section-label">Meta Lyrics</h3>
+      <blockquote class="lyrics">{song.meta_lyrics}</blockquote>
+      <hr class="divider" />
+    </>
+  )}
 
   {song.featured_artists.length > 0 && (
     <section class="block">
@@ -124,3 +140,20 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
     </section>
   )}
 </Layout>
+
+<style>
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-dim);
+    margin: 1.5rem 0 0.5rem;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 1.5rem 0;
+  }
+</style>

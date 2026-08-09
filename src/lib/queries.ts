@@ -47,7 +47,7 @@ async function attachReferences(songs: Omit<Song, 'references'>[]): Promise<Song
 }
 
 export async function getAllSongs(): Promise<Song[]> {
-  const { data, error } = await supabase.from('songs').select(SONG_SELECT).order('title');
+  const { data, error } = await supabase.from('songs').select(SONG_SELECT).order('created_at', { ascending: false });
   if (error) throw error;
   return attachReferences((data ?? []) as any);
 }

@@ -23,10 +23,10 @@ const songs = allSongs.filter(isMetasong);
   <div class="controls-row">
     <input type="text" id="song-search" class="search-input" placeholder="Search songs or artists…" />
     <select id="song-sort" class="sort-select">
+      <option value="newest" selected>Date Added (Newest)</option>
+      <option value="oldest">Date Added (Oldest)</option>
       <option value="az">Name (A–Z)</option>
       <option value="za">Name (Z–A)</option>
-      <option value="newest">Date Added (Newest)</option>
-      <option value="oldest">Date Added (Oldest)</option>
       <option value="random">Random</option>
     </select>
   </div>
@@ -49,6 +49,7 @@ const songs = allSongs.filter(isMetasong);
     ))}
   </ul>
   <p class="search-empty" id="song-search-empty">No songs match "<span></span>".</p>
+  <button type="button" class="load-more" id="song-load-more">Load more</button>
 </Layout>
 
 <style>
@@ -67,26 +68,54 @@ const songs = allSongs.filter(isMetasong);
     background: var(--color-surface);
     color: var(--color-ink);
   }
+  .load-more {
+    display: none;
+    margin: 1.75rem auto 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .load-more:hover { border-color: var(--color-ink); }
+
+  @media (max-width: 640px) {
+    .controls-row { flex-direction: column; }
+    .sort-select { width: 100%; }
+  }
 </style>
 
 <script>
+  const PAGE_SIZE = 24;
+
   const searchInput = document.getElementById('song-search') as HTMLInputElement;
   const sortSelect = document.getElementById('song-sort') as HTMLSelectElement;
   const grid = document.getElementById('song-grid')!;
   const items = [...document.querySelectorAll<HTMLLIElement>('#song-grid > li')];
   const empty = document.getElementById('song-search-empty')!;
   const emptyQuery = empty.querySelector('span')!;
+  const loadMoreBtn = document.getElementById('song-load-more') as HTMLButtonElement;
 
-  function applySearch() {
+  let order = items;
+  let visibleCount = PAGE_SIZE;
+
+  function render() {
     const query = searchInput.value.trim().toLowerCase();
-    let visibleCount = 0;
-    for (const item of items) {
-      const matches = !query || item.dataset.title!.includes(query) || item.dataset.artist!.includes(query);
-      item.style.display = matches ? '' : 'none';
-      if (matches) visibleCount++;
-    }
-    empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    const isSearching = query.length > 0;
+    const matched = order.filter(
+      (item) => !query || item.dataset.title!.includes(query) || item.dataset.artist!.includes(query)
+    );
+    const toShow = isSearching ? matched : matched.slice(0, visibleCount);
+    const visibleSet = new Set(toShow);
+    for (const item of order) item.style.display = visibleSet.has(item) ? '' : 'none';
+
+    empty.style.display = matched.length === 0 ? 'block' : 'none';
     emptyQuery.textContent = query;
+
+    loadMoreBtn.style.display = !isSearching && matched.length > visibleCount ? 'block' : 'none';
   }
 
   function shuffle<T>(arr: T[]): T[] {
@@ -107,8 +136,17 @@ const songs = allSongs.filter(isMetasong);
     else if (mode === 'oldest') sorted.sort((a, b) => Number(a.dataset.createdAt) - Number(b.dataset.createdAt));
     else if (mode === 'random') sorted = shuffle(sorted);
     for (const item of sorted) grid.appendChild(item);
+    order = sorted;
+    visibleCount = PAGE_SIZE;
+    render();
   }
 
-  searchInput.addEventListener('input', applySearch);
+  searchInput.addEventListener('input', render);
   sortSelect.addEventListener('change', applySort);
+  loadMoreBtn.addEventListener('click', () => {
+    visibleCount += PAGE_SIZE;
+    render();
+  });
+
+  render();
 </script>

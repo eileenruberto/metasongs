@@ -17,7 +17,10 @@ interface ArtistOption {
 }
 
 async function fetchSongLinkData(url: string) {
-  const res = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(url)}`);
+  // Goes through our own /api/songlink proxy rather than calling Odesli
+  // directly -- their CORS policy only allows localhost, not production
+  // origins, so a direct browser fetch works in dev and 500s once deployed.
+  const res = await fetch(`/api/songlink?url=${encodeURIComponent(url)}`);
   if (!res.ok) throw new Error('Could not resolve that link. Double-check it and try again.');
   const data = await res.json();
   const entity = data.entitiesByUniqueId?.[data.entityUniqueId];

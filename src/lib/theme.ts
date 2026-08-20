@@ -11,6 +11,7 @@ export const CATEGORY_PAPER: Record<string, Paper> = {
   'Meta Medleys': 'lilac',
   'Most Referenced': 'sand',
   'Lyrical Nods': 'slate',
+  'Mo’s Corner': 'brown',
 };
 
 export function paperForCategoryName(name: string | undefined | null): Paper {

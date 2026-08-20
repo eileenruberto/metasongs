@@ -21,6 +21,9 @@ const { title, description = 'A collection of songs that reference other songs.'
     <link rel="icon" href="/favicon.svg" />
     <title>{title} · Metasongs</title>
     <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lilex:ital,wght@0,100..700;1,100..700&family=Nova+Mono&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
   </head>
   <body class={`paper-${paper}`}>
     <header class="site-header">
@@ -46,16 +49,20 @@ const { title, description = 'A collection of songs that reference other songs.'
   :root {
     --color-ink: #1a1919;
 
-    --paper-blank: #eae8e3;
-    --paper-sand: #f2e0c8;
-    --paper-clay: #fbdbd2;
-    --paper-periwinkle: #d7e3fd;
-    --paper-lilac: #ebdcf6;
-    --paper-aqua: #c9ece4;
-    --paper-slate: #dbe4ed;
+    --paper-blank: #FAFFF9;
+    --paper-sand: #E3D888;
+    --paper-clay: #F6EFA6;
+    --paper-periwinkle: #C2E9F0;
+    --paper-lilac: #C2CAED;
+    --paper-aqua: #B6F9C9;
+    --paper-slate: #F4BBD3;
+    --paper-brown: #E9D2C0;
 
-    --font-sans: "Cabin", ui-sans-serif, system-ui, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Source Serif 4", ui-serif, serif;
+    --font-mono: "Lilex", ui-monospace, "SF Mono", Menlo, monospace;
+    --font-mono-flair: "Nova Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
 
     --radius: 10px;
   }
@@ -67,6 +74,7 @@ const { title, description = 'A collection of songs that reference other songs.'
   .paper-lilac { --color-paper: var(--paper-lilac); }
   .paper-aqua { --color-paper: var(--paper-aqua); }
   .paper-slate { --color-paper: var(--paper-slate); }
+  .paper-brown { --color-paper: var(--paper-brown); }
 
   body {
     --color-surface: color-mix(in srgb, var(--color-ink) 8%, var(--color-paper));
@@ -79,7 +87,7 @@ const { title, description = 'A collection of songs that reference other songs.'
   body {
     background: var(--color-paper);
     color: var(--color-ink);
-    font-family: var(--font-mono);
+    font-family: var(--font-serif);
     line-height: 1.55;
     transition: background 0.2s ease;
   }
@@ -90,12 +98,21 @@ const { title, description = 'A collection of songs that reference other songs.'
     padding: 1.5rem 1.25rem 4rem;
   }
   a { color: inherit; }
-  a:hover { font-style: italic; }
 
-  h1, h2, .wordmark {
+  h1, h2 {
     font-family: var(--font-sans);
     font-weight: 700;
     letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .wordmark {
+    font-family: var(--font-mono-flair);
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 1rem;
+    text-decoration: none;
+    letter-spacing: .05rem;
   }
 
   .site-header {
@@ -107,11 +124,10 @@ const { title, description = 'A collection of songs that reference other songs.'
     padding: 1.5rem 1.25rem 0.5rem;
   }
   .wordmark {
-    font-size: 1.15rem;
-    text-decoration: none;
+    
   }
   .wordmark:hover { font-style: normal; }
-  .site-header nav { display: flex; gap: 1.25rem; }
+  .site-header nav { display: flex; gap: 1.25rem; font-family: var(--font-sans); text-transform: uppercase;}
   .site-header nav a {
     text-decoration: none;
     color: var(--color-dim);
@@ -120,6 +136,7 @@ const { title, description = 'A collection of songs that reference other songs.'
   .site-header nav a:hover { color: var(--color-ink); }
 
   .site-footer {
+    font-family: var(--font-sans);
     max-width: 960px;
     margin: 0 auto;
     padding: 2rem 1.25rem;
@@ -129,28 +146,25 @@ const { title, description = 'A collection of songs that reference other songs.'
   }
 
   h1 {
-    font-size: clamp(2rem, 1.6rem + 2.4cqw, 3rem);
-    margin: 0 0 0.35rem;
-    line-height: 1.05;
+    font-size: clamp(4rem, 1.2rem + 2vw, 3rem);
+    line-height: 1.1;
   }
+
   h2 {
-    font-size: clamp(1.15rem, 1rem + 1cqw, 1.5rem);
+    font-size: clamp(1.25rem, 1.15rem + 1cqw, 1.6rem);
     margin: 0;
   }
   p.lede {
     color: var(--color-dim);
     margin-top: 0;
-    font-size: clamp(0.9rem, 0.85rem + 0.3cqw, 1.05rem);
+    font-size: clamp(1.3rem, 0.95rem + 0.3cqw, 1.15rem);
   }
 
-  .marker {
-    background: linear-gradient(104deg,
-      transparent 0%, transparent 3%,
-      #f2c14e 3%, #f2c14e 94%,
-      transparent 94%, transparent 100%);
-    padding: 0.05em 0.2em;
-    display: inline-block;
-    transform: rotate(-1deg);
+  p.song-info {
+    font-family: var(--font-sans);
+    color: var(--color-dim);
+    margin-top: 0;
+    font-size: clamp(1.3rem, 0.95rem + 0.3cqw, 1.15rem);
   }
 
   .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
@@ -159,6 +173,7 @@ const { title, description = 'A collection of songs that reference other songs.'
     padding: 0.3rem 0.75rem;
     border: 1px solid var(--color-border);
     border-radius: 999px;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     text-decoration: none;
     color: var(--color-dim);
@@ -209,9 +224,10 @@ const { title, description = 'A collection of songs that reference other songs.'
   }
   .song-card .meta { padding: 0.65rem 0.75rem; flex: 1; }
   .song-card .title { font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; }
-  .song-card .artist { color: var(--color-dim); font-size: 0.8rem; }
+  .song-card .artist { font-family: var(--font-serif); color: var(--color-dim); font-size: 0.8rem; }
 
   .breadcrumb {
+    font-family: var(--font-sans);
     font-size: 0.8rem;
     color: var(--color-dim);
     margin-bottom: 1rem;
@@ -223,36 +239,70 @@ const { title, description = 'A collection of songs that reference other songs.'
 
   .external-arrow { display: inline-block; opacity: 0.65; margin-left: 0.15em; }
 
-  .song-header { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
-  .song-header img {
-    width: 180px; height: 180px; object-fit: cover;
-    border-radius: var(--radius); border: 1px solid var(--color-border);
-    background: var(--color-surface);
-  }
+.song-header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  container-type: inline-size;
+}
+
+.song-header img {
+  width: 180px; height: 180px; object-fit: cover;
+  border-radius: var(--radius); border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0; /* don't let the image get squished */
+}
+
+.song-header .song-header-text {
+  flex: 1 1 200px;  /* grow, shrink, but prefer at least 200px */
+  min-width: 0;      /* the key fix — lets long text actually wrap instead of forcing the row to break */
+}
+
+.song-header-text h1 {
+  font-size: clamp(1.5rem, .7rem + 3cqw, 2.75rem);
+  line-height: 1.15;
+  overflow-wrap: break-word;
+}
+
   .link-row { display: flex; gap: 0.6rem; margin: 1rem 0; flex-wrap: wrap; }
   .link-row a {
     border: 1px solid var(--color-border);
     border-radius: 999px;
     padding: 0.35rem 0.85rem;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: .1rem;
     background: var(--color-surface);
   }
   .link-row a:hover { border-color: var(--color-ink); font-style: normal; }
 
   blockquote.lyrics {
-    white-space: pre-wrap;
-    font-style: italic;
     color: var(--color-dim);
     border-left: 3px solid var(--color-ink);
-    margin: 1.5rem 0;
     padding: 0.25rem 0 0.25rem 1rem;
-    font-size: clamp(0.95rem, 0.9rem + 0.3cqw, 1.1rem);
+    font-size: clamp(1.3rem, 0.8rem + 0.3cqw, 1.5rem);
+    font-weight: 300;
+    margin: .9rem 0 0;
+  }
+
+  .lyrics-break {
+    margin: .3rem 1rem;
+    color: var(--color-border);
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  section.block p.featured-artists {
+    font-weight: 310;
+    font-size: 1.5rem;
   }
 
   section.block { margin-top: 2rem; }
   section.block h2 { margin-bottom: 0.5rem; }
-  section.block p { font-size: 0.95rem; }
+  section.block p { font-size: 1.2rem; }
 
   .description { font-size: 0.95rem; }
   .description p { margin: 0 0 1rem; }
@@ -263,6 +313,10 @@ const { title, description = 'A collection of songs that reference other songs.'
     padding: 0.25rem 0 0.25rem 1rem;
     border-left: 3px solid var(--color-border);
     color: var(--color-dim);
+    font-weight: 330;
+  }
+  .description blockquote p {
+    font-size: 1.5rem;
   }
   .description ul, .description ol { margin: 0 0 1rem; padding-left: 1.3rem; }
   .description code {
@@ -294,7 +348,7 @@ const { title, description = 'A collection of songs that reference other songs.'
     background: var(--color-border);
   }
   .song-row-text { display: flex; flex-direction: column; min-width: 0; }
-  .song-row-title { font-weight: 500; }
+  .song-row-title { font-weight: 600; font-family: var(--font-sans); font-size: 1rem; }
   .song-row-artist { color: var(--color-dim); font-size: 0.8rem; }
   .song-row-chevron { margin-left: auto; color: var(--color-dim); flex-shrink: 0; }
   .song-row-unmatched { color: var(--color-dim); }
@@ -316,6 +370,7 @@ const { title, description = 'A collection of songs that reference other songs.'
     border-radius: var(--radius);
     padding: 0.6rem;
     background: var(--color-surface);
+    font-family: var(--font-sans);
   }
   .artist-card:hover { font-style: normal; border-color: var(--color-ink); }
   .artist-card img {
@@ -323,6 +378,17 @@ const { title, description = 'A collection of songs that reference other songs.'
     background: var(--color-border);
   }
   .artist-card span { font-size: 0.85rem; }
+
+  .artist-header {
+    align-items: center;
+  }
+
+  .artist-header img {
+    width: 140px;
+    height: 140px;
+  }
+
+/* Responsive Things */
 
   @media (max-width: 640px) {
     .site-header {

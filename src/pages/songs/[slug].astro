@@ -26,9 +26,9 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
   </nav>
   <div class="song-header">
     {song.image_url && <img src={song.image_url} alt={song.title} />}
-    <div>
+    <div class="song-header-text">
       <h1>{song.title}</h1>
-      <p class="lede">
+      <p class="song-info">
         <a href={`/artists/${song.artist.slug}`}>{song.artist.name}</a>
         {song.album && <> · {song.album}</>}
       </p>
@@ -65,18 +65,23 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
 
   {(descriptionHtml || song.source_url) && <hr class="divider" />}
 
-  {song.meta_lyrics && (
-    <>
-      <h3 class="section-label">Meta Lyrics</h3>
-      <blockquote class="lyrics">{song.meta_lyrics}</blockquote>
-      <hr class="divider" />
-    </>
-  )}
+{song.meta_lyrics && (
+  <>
+    <h3 class="section-label">Meta Lyrics</h3>
+    {song.meta_lyrics.split('---').map((excerpt, i) => (
+      <>
+        {i > 0 && <p class="lyrics-break" aria-hidden="true">⸻</p>}
+        <blockquote class="lyrics" set:html={excerpt.trim().replace(/\n/g, '<br />')} />
+      </>
+    ))}
+    <hr class="divider" />
+  </>
+)}
 
   {song.featured_artists.length > 0 && (
     <section class="block">
       <h2>Featured artists</h2>
-      <p>
+      <p class="featured-artists">
         {song.featured_artists.map((a, i) => (
           <>
             {i > 0 && ', '}
@@ -143,11 +148,11 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
 
 <style>
   .section-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-family: var(--font-mono-flair);
+    font-size: 0.8rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.18em;
     color: var(--color-dim);
     margin: 1.5rem 0 0.5rem;
   }

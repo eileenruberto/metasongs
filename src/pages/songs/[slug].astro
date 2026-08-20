@@ -33,8 +33,11 @@ const descriptionHtml = song.description ? await renderMarkdown(song.description
         {song.album && <> · {song.album}</>}
       </p>
       <div class="link-row">
+        {song.apple_music_url && (
+          <a href={song.apple_music_url} target="_blank" rel="noopener">Apple Music<span class="external-arrow">&nbsp;↗</span></a>
+        )}
         {song.song_link_url && (
-          <a href={song.song_link_url} target="_blank" rel="noopener">Song Link<span class="external-arrow">&nbsp;↗</span></a>
+          <a href={song.song_link_url} target="_blank" rel="noopener">All Platforms<span class="external-arrow">&nbsp;↗</span></a>
         )}
       </div>
       <div class="chip-row">

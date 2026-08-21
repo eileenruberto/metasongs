@@ -54,6 +54,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
   const [sentiment, setSentiment] = useState('');
   const [published, setPublished] = useState(false);
 
+  const [tags, setTags] = useState<string[]>([]);
   const [categoryTags, setCategoryTags] = useState<string[]>([]);
   const [subcategoryTags, setSubcategoryTags] = useState<string[]>([]);
   const [referenceTypeTags, setReferenceTypeTags] = useState<string[]>([]);
@@ -80,7 +81,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
         .from('songs')
         .select(
           `id, title, album, image_url, spotify_url, apple_music_url, song_link_url, meta_lyrics, description,
-           source_url, sentiment, published,
+           source_url, sentiment, published, tags,
            artist:artists!songs_artist_id_fkey ( id, name ),
            song_tags ( tag_type, value ),
            featured_artist_links:song_featured_artists ( artist:artists!song_featured_artists_artist_id_fkey ( id, name ) )`
@@ -103,6 +104,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
         setSentiment(song.sentiment ?? '');
         setPublished(Boolean(song.published));
         const tags = (song.song_tags ?? []) as { tag_type: string; value: string }[];
+        setTags(song.tags ?? []);
         setCategoryTags(tags.filter((t) => t.tag_type === 'category').map((t) => t.value));
         setSubcategoryTags(tags.filter((t) => t.tag_type === 'subcategory').map((t) => t.value));
         setReferenceTypeTags(tags.filter((t) => t.tag_type === 'reference_type').map((t) => t.value));
@@ -174,6 +176,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
       description: description.trim() || null,
       source_url: sourceUrl.trim() || null,
       sentiment: sentiment.trim() || null,
+      tags,
       published,
     };
 
@@ -328,8 +331,8 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
         <FeaturedArtistsPicker supabase={supabase} values={featuredArtists} onChange={setFeaturedArtists} />
       </div>
       <div class="admin-field">
-        <span>Sentiment</span>
-        <input type="text" value={sentiment} onInput={(e) => setSentiment((e.target as HTMLInputElement).value)} />
+        <span>Tags</span>
+        <TagInput values={tags} onChange={setTags} placeholder="Add a tag…" />
       </div>
 
       <div class="admin-field">

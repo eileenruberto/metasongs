@@ -17,20 +17,18 @@ interface ArtistOption {
 }
 
 async function fetchSongLinkData(url: string) {
-  // Goes through our own /api/songlink proxy rather than calling Odesli
-  // directly -- their CORS policy only allows localhost, not production
-  // origins, so a direct browser fetch works in dev and 500s once deployed.
+  // Goes through our own /api/songlink proxy, which looks the track up via
+  // Spotify's Web API and Apple's iTunes Search API (Odesli/song.link, which
+  // this used to call, shut its public API down on July 31, 2026).
   const res = await fetch(`/api/songlink?url=${encodeURIComponent(url)}`);
-  if (!res.ok) throw new Error('Could not resolve that link. Double-check it and try again.');
   const data = await res.json();
-  const entity = data.entitiesByUniqueId?.[data.entityUniqueId];
+  if (!res.ok) throw new Error(data?.error || 'Could not resolve that link. Double-check it and try again.');
   return {
-    title: entity?.title ?? '',
-    artistName: entity?.artistName ?? '',
-    imageUrl: entity?.thumbnailUrl ?? '',
-    spotifyUrl: data.linksByPlatform?.spotify?.url ?? '',
-    appleMusicUrl: data.linksByPlatform?.appleMusic?.url ?? '',
-    songLinkUrl: data.pageUrl ?? '',
+    title: data.title ?? '',
+    artistName: data.artistName ?? '',
+    imageUrl: data.imageUrl ?? '',
+    spotifyUrl: data.spotifyUrl ?? '',
+    appleMusicUrl: data.appleMusicUrl ?? '',
   };
 }
 
@@ -130,7 +128,6 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
       if (result.imageUrl) setImageUrl(result.imageUrl);
       if (result.spotifyUrl) setSpotifyUrl(result.spotifyUrl);
       if (result.appleMusicUrl) setAppleMusicUrl(result.appleMusicUrl);
-      if (result.songLinkUrl) setSongLinkUrl(result.songLinkUrl);
       if (result.artistName && (!artist || artist.name !== result.artistName)) {
         const { data: match } = await supabase.from('artists').select('id, name').ilike('name', result.artistName).limit(1);
         if (match && match.length > 0) {
@@ -255,12 +252,12 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
     <form onSubmit={handleSubmit}>
       <div class="admin-card">
         <div class="admin-field">
-          <span>Paste a Spotify or Apple Music link</span>
+          <span>Paste an Apple Music song link</span>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               type="url"
               value={linkInput}
-              placeholder="https://open.spotify.com/track/..."
+              placeholder="https://music.apple.com/us/song/..."
               onInput={(e) => setLinkInput((e.target as HTMLInputElement).value)}
             />
             <button type="button" class="admin-button secondary" disabled={fetching} onClick={handleFetchLink}>
@@ -268,7 +265,8 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
             </button>
           </div>
           <p class="admin-status">
-            Fills in title, artist, album art, and every platform link via song.link. Review before saving.
+            Fills in title, artist, and album art from Apple Music via iTunes. Paste the Spotify link
+            manually below (Spotify's API isn't available without a paid dev account). Review before saving.
           </p>
           {fetchError && <p class="admin-error">{fetchError}</p>}
         </div>

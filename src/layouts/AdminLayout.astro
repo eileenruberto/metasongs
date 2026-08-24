@@ -16,6 +16,9 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lilex:ital,wght@0,100..700;1,100..700&family=Nova+Mono&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
     <title>{title} · Metasongs Admin</title>
   </head>
   <body class="paper-blank">
@@ -29,8 +32,10 @@ const { title } = Astro.props;
   :root {
     --color-ink: #1a1919;
     --paper-blank: #eae8e3;
-    --font-sans: "Cabin", ui-sans-serif, system-ui, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Source Serif 4", ui-serif, serif;
+    --font-mono: "Lilex", ui-monospace, "SF Mono", Menlo, monospace;
+    --font-mono-flair: "Nova Mono", ui-monospace, "SF Mono", Menlo, monospace;
     --radius: 10px;
   }
   .paper-blank { --color-paper: var(--paper-blank); }
@@ -206,4 +211,60 @@ const { title } = Astro.props;
     color: var(--color-ink);
     margin-bottom: 1rem;
   }
+
+/* TOAST */
+
+.admin-toast {
+  position: relative;
+  padding: 1.75rem 2rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+.admin-toast-success {
+  background: #b9f6ca;
+}
+.admin-toast-heading {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #0f1f14;
+}
+.admin-toast-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.admin-toast-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 31, 20, 0.25);
+  background: rgba(255, 255, 255, 0.25);
+  color: #0f1f14;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.admin-toast-pill:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+.admin-toast-dismiss {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  color: rgba(15, 31, 20, 0.5);
+}
+.admin-toast-dismiss:hover {
+  color: #0f1f14;
+}
+
 </style>

@@ -9,6 +9,7 @@ interface Props {
   supabase: SupabaseClient;
   songId?: string;
   initialLink?: string;
+  onCreated?: (slug: string) => void;
 }
 
 interface ArtistOption {
@@ -32,7 +33,7 @@ async function fetchSongLinkData(url: string) {
   };
 }
 
-export default function SongForm({ supabase, songId, initialLink }: Props) {
+export default function SongForm({ supabase, songId, initialLink, onCreated }: Props) {
   const isEdit = Boolean(songId);
   const [loading, setLoading] = useState(isEdit);
 
@@ -181,6 +182,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
     };
 
     let id = songId;
+    let newSlug: string | null = null;
     if (isEdit) {
       const { error } = await supabase.from('songs').update(payload).eq('id', songId);
       if (error) {
@@ -197,6 +199,7 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
         return setSaveError(error.message);
       }
       id = created.id;
+      newSlug = created.slug;
       setSavedSlug(created.slug);
     }
 
@@ -247,6 +250,10 @@ export default function SongForm({ supabase, songId, initialLink }: Props) {
       setSavedSlug(current?.slug ?? null);
     }
     setSaveStatus('idle');
+
+    if (!isEdit && onCreated && newSlug) {
+      onCreated(newSlug);
+    }
   };
 
   if (loading) return <p class="admin-loading">Loading…</p>;

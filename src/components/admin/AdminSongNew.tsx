@@ -17,7 +17,13 @@ export default function AdminSongNew({ supabaseUrl, supabaseAnonKey }: { supabas
           {initialLink === undefined ? (
             <p class="admin-loading">Loading…</p>
           ) : (
-            <SongForm supabase={supabase} initialLink={initialLink} />
+            <SongForm
+              supabase={supabase}
+              initialLink={initialLink}
+              onCreated={(slug) => {
+                window.location.href = `/admin/songs?created=${encodeURIComponent(slug)}`;
+              }}
+            />
           )}
         </>
       )}
